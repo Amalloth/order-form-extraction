@@ -2,7 +2,8 @@ from typing import List
 
 from pydantic import BaseModel
 
-class ModelOutput(BaseModel):
+
+class DetectionModelOutput(BaseModel):
     label: str
     score: float
-    bbox: List[float] # Length 4
+    bbox: List[float]  # Length 4

@@ -6,6 +6,8 @@ class MaxResize(object):
         width, height = image.size
         current_max_size = max(width, height)
         scale = self.max_size / current_max_size
-        resized_image = image.resize((int(round(scale*width)), int(round(scale*height))))
+        resized_image = image.resize(
+            (int(round(scale * width)), int(round(scale * height)))
+        )
 
         return resized_image
