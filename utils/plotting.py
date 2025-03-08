@@ -1,7 +1,12 @@
+from typing import List
+
 from PIL import Image
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.patches import Patch
+
+from models.detection_model_output import DetectionModelOutput
+
 
 def fig2img(fig) -> Image:
     """Convert a Matplotlib figure to a PIL Image and return it"""
@@ -13,22 +18,22 @@ def fig2img(fig) -> Image:
     return img
 
 
-def visualize_detected_tables(img, det_tables, out_path=None):
+def visualize_detected_tables(img, det_tables: List[DetectionModelOutput], out_path=None):
     plt.imshow(img, interpolation="lanczos")
     fig = plt.gcf()
     fig.set_size_inches(20, 20)
     ax = plt.gca()
 
     for det_table in det_tables:
-        bbox = det_table['bbox']
+        bbox = det_table.bbox
 
-        if det_table['label'] == 'table':
+        if det_table.label == 'table':
             facecolor = (1, 0, 0.45)
             edgecolor = (1, 0, 0.45)
             alpha = 0.3
             linewidth = 2
             hatch='//////'
-        elif det_table['label'] == 'table rotated':
+        elif det_table.label == 'table rotated':
             facecolor = (0.95, 0.6, 0.1)
             edgecolor = (0.95, 0.6, 0.1)
             alpha = 0.3
@@ -63,3 +68,26 @@ def visualize_detected_tables(img, det_tables, out_path=None):
       plt.savefig(out_path, bbox_inches='tight', dpi=150)
 
     return fig
+
+
+def plot_table_rows(cells, id2label, class_to_visualize):
+    if class_to_visualize not in id2label.values():
+      raise ValueError("Class should be one of the available classes")
+
+    plt.figure(figsize=(16,10))
+    # plt.imshow(cropped_table)
+    ax = plt.gca()
+
+    for cell in cells:
+        score = cell["score"]
+        bbox = cell["bbox"]
+        label = cell["label"]
+
+        if label == class_to_visualize:
+          xmin, ymin, xmax, ymax = tuple(bbox)
+
+          ax.add_patch(plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, fill=False, color="red", linewidth=3))
+          text = f'{cell["label"]}: {score:0.2f}'
+          ax.text(xmin, ymin, text, fontsize=15,
+                  bbox=dict(facecolor='yellow', alpha=0.5))
+          plt.axis('off')

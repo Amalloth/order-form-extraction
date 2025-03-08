@@ -1,3 +1,7 @@
+import os
+from pathlib import Path
+from typing import List
+
 from PIL import Image
 
 class ImageReader:
@@ -12,3 +16,6 @@ class ImageReader:
                 image = Image.open(os.path.join(self.directory, filename)).convert('RGB')
                 images.append(image)
         return images
+
+    def list_image_paths(self) -> List[Path]:
+        return list(self.directory.glob('*.jpg')) + list(self.directory.glob('*.png'))
